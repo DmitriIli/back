@@ -1,0 +1,51 @@
+
+# sudo docker-compose up 
+
+
+version: "3.9"
+volumes:
+  pg_timeweb:
+  pgadmin-data:
+
+services: 
+  postgres:
+    container_name: pg
+    image: postgres:13.4
+    restart: always
+    environment:
+      POSTGRES_DB: "pg_test"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "postgres"
+    ports: 
+      - "5432:5432"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 1G
+    networks:
+      - postgres
+
+  # pgadmin:
+  #   container_name: pg_admin
+  #   image: dpage/pgadmin4:7.2
+  #   environment:
+  #     PGADMIN_DEFAULT_MAIL: "mail@mail.com"
+  #     PGADMIN_DEFAULT_PASSWORD: "pgadmin4"
+  #     PGADMIN_CONFIG_SERVER_MODE: "False"
+  #   volumes:
+  #     - pgadmin-data:/var/lib/pgadmin
+  #   ports:
+  #     - "5050:80"
+  
+  #   deploy:
+  #     resources:
+  #       limits:
+  #         cpus: '0.5'
+  #         memory: 1G
+  #   networks:
+  #     - postgres
+
+networks:
+  postgres:
+    driver: bridge
