@@ -11,7 +11,7 @@ engine = create_async_engine(
 )
 
 
-session_factory = async_sessionmaker(engine)
+async_session_factory = async_sessionmaker(engine)
 
 
 class Base(DeclarativeBase):

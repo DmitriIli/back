@@ -7,8 +7,6 @@ from datetime import datetime
 
 metadata_obj = MetaData()
 
-
-
 users_table = Table(
     'users',
     metadata_obj,
@@ -16,27 +14,32 @@ users_table = Table(
     Column('name', String, unique=True)
 )
 
-
-
-metadata = MetaData()
-
-
 class Base(DeclarativeBase):
     ...
 
 
-# Base = declarative_base()
-# mapper_registry = registry()
 
+class Users(Base):
+    __tablename__ = 'users'
+    id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[str] = mapped_column(unique=True,nullable=False)
+    created_at: Mapped[datetime]
+    updated_at: Mapped[datetime]
+    # role: Mapped[int] = mapped_column(ForeignKey('roles.id'))
 
-# class Users(Base):
-#     __tablename__ = 'users'
-#     id: Mapped[int] = mapped_column(primary_key=True)
-#     username: Mapped[str] = mapped_column(unique=True)
-#     created_at: Mapped[datetime]
-#     role: Mapped[int] = mapped_column(ForeignKey('roles.id'))
-#     register_at: Mapped[TIMESTAMP] = mapped_column(
-#         server_default=datetime.utcnow)
+   
+class Notes(Base):
+    __tablename__ = 'notes'
+    id: Mapped[int] = mapped_column(primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
+    title: Mapped[str] = mapped_column(unique=True, nullable=False)
+    content: Mapped[str]
+    created_at: Mapped[datetime]
+    updated_at: Mapped[datetime]
+
+class Events(Base):
+    __tablename__= 'events'
+    id: Mapped[int] = mapped_column(primary_key=True)
 
 
 # class Roles(Base):
