@@ -2,58 +2,75 @@ from pydantic import BaseModel
 from sqlalchemy import MetaData, Table, Column, Integer, String, ForeignKey, TIMESTAMP, JSON, DateTime, Numeric, CheckConstraint
 from sqlalchemy.orm import mapped_column, Mapped, DeclarativeBase, DeclarativeMeta, registry
 from sqlalchemy.ext.declarative import declarative_base
-from typing import List
+from sqlalchemy.sql import func
+from typing import List,  Annotated
 from datetime import datetime
+from enum import Enum
 
 metadata_obj = MetaData()
 
-users_table = Table(
-    'users',
-    metadata_obj,
-    Column('id', Integer, primary_key=True),
-    Column('name', String, unique=True)
-)
+# users_table = Table(
+#     'users',
+#     metadata_obj,
+#     Column('id', Integer, primary_key=True),
+#     Column('name', String, unique=True)
+# )
+
 
 class Base(DeclarativeBase):
     ...
 
 
+intpk = Annotated[int, mapped_column(int, primary_key=True)]
+
+
+class Roles(Enum):
+    user = 'user'
+    admin = 'admin'
+
 
 class Users(Base):
     __tablename__ = 'users'
-    id: Mapped[int] = mapped_column(primary_key=True)
-    username: Mapped[str] = mapped_column(unique=True,nullable=False)
-    created_at: Mapped[datetime]
-    updated_at: Mapped[datetime]
-    # role: Mapped[int] = mapped_column(ForeignKey('roles.id'))
+    id: Mapped[intpk]
+    username: Mapped[str] = mapped_column(unique=True, nullable=False)
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    role: Mapped[Roles]
 
-   
+
 class Notes(Base):
     __tablename__ = 'notes'
-    id: Mapped[int] = mapped_column(primary_key=True)
-    user_id: Mapped[int] = mapped_column(ForeignKey('user.id'))
+    id: Mapped[intpk]
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
     title: Mapped[str] = mapped_column(unique=True, nullable=False)
     content: Mapped[str]
-    created_at: Mapped[datetime]
-    updated_at: Mapped[datetime]
+    date_time: Mapped[datetime]
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
 
 class Events(Base):
-    __tablename__= 'events'
-    id: Mapped[int] = mapped_column(primary_key=True)
+    __tablename__ = 'events'
+    id: Mapped[intpk]
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    title: Mapped[str]
+    description: Mapped[str]
+    date_time: Mapped[datetime]
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    
+
+class Tags(Base):
+    __tablename__ = 'tags'
+    id: Mapped[intpk]
+    user_id: Mapped[int] = mapped_column(ForeignKey('users.id'))
+    name: Mapped[str] = mapped_column(unique=True)
 
 
 # class Roles(Base):
 #     __tablename__ = 'roles'
-#     id: Mapped[int] = mapped_column(primary_key=True)
+#     id: Mapped[intpk]
+#     role = Mapped[Roles]
 #     description: Mapped[str]
 
 
-# class Notes(Base):
-#     __tablename__ = 'notes'
-#     id: Mapped[int] = mapped_column(primary_name=True)
-#     user_id:Mapped[int] = mapped_column(ForeignKey('users.id'))
-#     title: Mapped[str]
-#     data: Mapped[DateTime]
-#     interval: Mapped[interval] = mapped_column(unique=True)
-#     category: Mapped[category]
-#     create_on: Mapped[DateTime] = mapped_column(default=datetime.now())

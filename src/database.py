@@ -14,9 +14,9 @@ engine = create_async_engine(
 async_session_factory = async_sessionmaker(engine)
 
 
-class Base(DeclarativeBase):
-    ...
-    # def __repr__(self):
-    #     cols = [
-    #         f'{col}={getattr(self,)}' for col in self.__table__.columns.keys()]
-    #     return f'<{self.__class__.__name__}{','.join(cols)}>'
+# class Base(DeclarativeBase):
+#     ...
+#     # def __repr__(self):
+#     #     cols = [
+#     #         f'{col}={getattr(self,)}' for col in self.__table__.columns.keys()]
+#     #     return f'<{self.__class__.__name__}{','.join(cols)}>'

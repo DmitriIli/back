@@ -1,6 +1,7 @@
 from sqlalchemy import text, insert
 from src.models import metadata_obj, Users
 from src.database import engine, async_session_factory
+from src.models import Base
 
 
 async def get_conn_res():
@@ -11,11 +12,10 @@ async def get_conn_res():
 
 
 async def create_tables():
-    # await metadata_obj.create_all(engine)
-    engine.echo = False
+    engine.echo = True
     async with engine.begin() as conn:
-        await conn.run_sync(metadata_obj.drop_all)
-        await conn.run_sync(metadata_obj.create_all)
+        await conn.run_sync(Base.metadata.drop_all)
+        await conn.run_sync(Base.metadata.create_all)
     engine.echo = True
 
 
@@ -23,8 +23,8 @@ async def create_tables():
 
 async def insert_data():
     user1 = Users(username='user1')
-    async with async_session_factory as session:
-        session.add_all([user1,])
+    async with async_session_factory() as session:
+        session.add(user1)
         await session.commit()
         
 # async def insert_data():
