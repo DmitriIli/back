@@ -1,12 +1,13 @@
 import asyncio
-from src.queries.core import get_conn_res
-from src.queries.core import create_tables, insert_data
+from src.queries.orm import AsyncORM
 
 
 async def main():
-    # await get_conn_res()
-    await create_tables()
-    # await insert_data()
+    # task1 = asyncio.create_task(AsyncORM.create_table())
+    task2 = asyncio.create_task(AsyncORM.insert_data())
+    # await task1
+  
+    await task2
 
 
 if __name__ == '__main__':
@@ -17,6 +18,3 @@ if __name__ == '__main__':
         asyncio.run(main())
     except KeyboardInterrupt:
         pass
-
-# asyncio.run(create_tables())
-# asyncio.run(insert_data())
